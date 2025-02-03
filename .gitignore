@@ -8,3 +8,4 @@ openai_creds/*
 output/*
 build/*
 dist/*
+.llmsanitize_env/
