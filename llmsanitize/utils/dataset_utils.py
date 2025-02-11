@@ -2,7 +2,7 @@
 
 def get_answers_list(data_point, dataset_name):
     choices = []
-    if dataset_name == "allenai/ai2_arc":
+    if dataset_name in ["allenai/ai2_arc", "eduagarcia/enem_challenge"]:
         choices = data_point["choices"]["text"]
     if dataset_name == "Rowan/hellaswag":
         choices = data_point["endings"]

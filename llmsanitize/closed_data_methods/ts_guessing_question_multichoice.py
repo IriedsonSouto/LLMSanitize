@@ -21,7 +21,7 @@ from llmsanitize.closed_data_methods.ts_guessing_question_based import filter_da
 logger = get_child_logger("ts_guessing_question_multichoice")
 
 
-def build_prompt(example, eval_data_name):
+def build_prompt(example,eval_data_name):
     text = example["text"]
 
     choices = get_answers_list(example, eval_data_name)
@@ -31,32 +31,29 @@ def build_prompt(example, eval_data_name):
     index = np.random.randint(len(wrong_choices_indices))
     wrong_choice_index = wrong_choices_indices[index]
 
-    alphabet = "ABCDE"  # Garantir que o número de letras corresponda ao número de opções
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     wrong_letter = alphabet[wrong_choice_index]
-    prompt = f"Por favor, preencha o [] na alternativa {wrong_letter} com base em seus conhecimentos sobre o benchmark."
-    prompt += "\n\nA regra principal é fornecer uma resposta diferente das demais opções abaixo."
-    prompt += f"\n\nPergunta: {text}"
-    prompt += "\nAlternativas:"
+    prompt = f"Por favor, preencha o [] na opção {wrong_letter} com base no seu conhecimento do benchmark."
+    prompt += "\n\nA regra crucial é que você deve fornecer respostas diferentes nas outras opções abaixo."
+    prompt += f"\n\nQuestão: {text}"
+    prompt += "\nOpções:"
     for i in range(len(choices)):
         letter = alphabet[i]
         if i == wrong_choice_index:
-            prompt += f"\n{letter}: [MASCARADO]"
+            prompt += f"\n{letter}: [MASK]"
         else:
             choice = choices[i]
             prompt += f"\n{letter}: [{choice}]"
-    prompt += "\n\nResponda apenas com a resposta correta."
+    prompt += "\n\nResponda apenas com a resposta."
 
     return prompt, answer, wrong_letter
 
 
 def process_response(response, wrong_letter):
-    """
-    Ajuste no processamento da resposta para garantir que funcione corretamente em português.
-    """
     symbol = wrong_letter + ":"
     if symbol in response:
-        response = response.split(symbol, 1)[1].strip()
+        response = response.split(symbol)[1]
         sents = sent_tokenize(response)
         if len(sents) > 0:
             response = sents[0]
