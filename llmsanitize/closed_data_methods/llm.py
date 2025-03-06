@@ -128,6 +128,10 @@ class LLM:
                 truncation=True,
                 max_length=self.max_input_tokens
             )
+            
+            device = next(self.model.parameters()).device
+            inputs = {k: v.to(device) for k, v in inputs.items()}
+            
             outputs = self.model.generate(
                 **inputs,
                 num_return_sequences=1,

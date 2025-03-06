@@ -34,10 +34,10 @@ def build_prompt(example,eval_data_name):
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
     wrong_letter = alphabet[wrong_choice_index]
-    prompt = f"Please fill in the [] in option {wrong_letter} based on your benchmark knowledge."
-    prompt += "\n\nThe crucial rule is that you should provide different answer in other options below."
-    prompt += f"\n\nQuestion: {text}"
-    prompt += "\nOptions:"
+    prompt = f"Por favor, preencha o [] na opção {wrong_letter} com base no seu conhecimento do benchmark."
+    prompt += "\n\nA regra crucial é que você deve fornecer respostas diferentes nas outras opções abaixo."
+    prompt += f"\n\nQuestão: {text}"
+    prompt += "\nOpções:"
     for i in range(len(choices)):
         letter = alphabet[i]
         if i == wrong_choice_index:
@@ -45,7 +45,7 @@ def build_prompt(example,eval_data_name):
         else:
             choice = choices[i]
             prompt += f"\n{letter}: [{choice}]"
-    prompt += "\n\nReply with answer only."
+    prompt += "\n\nResponda apenas com a resposta."
 
     return prompt, answer, wrong_letter
 

@@ -12,6 +12,8 @@ def get_answers_list(data_point, dataset_name):
         choices = data_point["correct_answers"]
     if dataset_name == "winogrande":
         choices = [data_point["option1"], data_point["option2"]]
+    if dataset_name == "eduagarcia/enem_challenge":
+        choices = data_point["choices"]["text"]
 
     return choices
 
@@ -34,5 +36,11 @@ def get_answer_index(data_point, dataset_name):
         answer_index = correct_answers.index(best_answer)
     if dataset_name == "winogrande":
         answer_index = int(data_point["answer"]) - 1
+    if dataset_name == "eduagarcia/enem_challenge":
+        key = data_point["answerKey"].lower()
+        if key in ["1", "2", "3", "4", "5"]:
+            answer_index = int(key)-1
+        else:
+            answer_index = alphabet.index(key)
 
     return answer_index
