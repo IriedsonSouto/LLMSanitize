@@ -62,6 +62,11 @@ class LLM:
             logger.info(f"Loading local closed_data from {local_model_path} and tokenizer from {local_tokenizer_path}.")
             self.model = AutoModelForCausalLM.from_pretrained(local_model_path, torch_dtype="auto").to(device)
             self.tokenizer = AutoTokenizer.from_pretrained(local_tokenizer_path)
+            
+            if self.tokenizer.pad_token is None:
+                logger.info("Tokenizer doesn't have a padding token. Setting pad_token = eos_token.")
+                self.tokenizer.pad_token = self.tokenizer.eos_token
+            
             self.api_base = False
         # run local closed_data with the vLLM API
         elif local_port:
@@ -70,6 +75,11 @@ class LLM:
             initialize_post(_config)
             self.query_fn = query_llm_post
             self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+            
+            if self.tokenizer.pad_token is None:
+                logger.info("Tokenizer doesn't have a padding token. Setting pad_token = eos_token.")
+                self.tokenizer.pad_token = self.tokenizer.eos_token
+                
             self.api_base = True
         # run closed_data with the OpenAI API, either an OpenAI closed_data, or a local closed_data through vLLM
         else:
@@ -121,6 +131,10 @@ class LLM:
             if not(self.query_config.query.no_chat_template):
                 prompt = [{"role": "user", "content": prompt}]
                 prompt = self.tokenizer.apply_chat_template(prompt, tokenize=False, add_generation_prompt=True)
+            
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
+                
             inputs = self.tokenizer(
                 prompt,
                 return_tensors="pt",
